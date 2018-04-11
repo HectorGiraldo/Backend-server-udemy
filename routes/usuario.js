@@ -6,7 +6,7 @@ var mdAutenticacion = require('../middlewares/autenticacion');
 
 var app = express();
 
-var Usuario = require('../models/usuario')
+var Usuario = require('../models/usuario');
 
 //==============================
 //  Obtener todos los usuarios
@@ -14,7 +14,12 @@ var Usuario = require('../models/usuario')
 
 app.get('/', (req, res, next) => {
 
+    var desde = req.query.desde || 0;
+    desde = Number(desde);
+
     Usuario.find({}, 'nombre email img role')
+        .skip(desde)
+        .limit(5)
         .exec(
             (err, usuarios) => {
                 if (err) {
@@ -24,10 +29,16 @@ app.get('/', (req, res, next) => {
                         errors: err
                     });
                 }
-                res.status(200).json({
-                    ok: true,
-                    usuarios: usuarios
-                });
+
+                Usuario.count({}, (err, conteo) => {
+                    res.status(200).json({
+                        ok: true,
+                        usuarios: usuarios,
+                        total: conteo
+                    });
+                })
+
+
 
 
             });
@@ -131,7 +142,7 @@ app.delete("/:id", mdAutenticacion.verificaToken, (req, res) => {
         if (!usuarioBorrado) {
             return res.status(400).json({
                 ok: false,
-                mensaje: "El existe ningun usuario con ese id",
+                mensaje: "No existe ningun usuario con ese id",
                 errors: { message: "no existe un usuario con ese ID" }
             });
         }
