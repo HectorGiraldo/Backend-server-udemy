@@ -1,5 +1,5 @@
-var express = require("express");
-var fileUpload = require("express-fileupload");
+var express = require('express');
+var fileUpload = require('express-fileupload');
 var fs = require('fs');
 
 
@@ -13,7 +13,7 @@ var Hospital = require('../models/hospital');
 app.use(fileUpload());
 
 
-app.put("/:tipo/:id", (req, res, next) => {
+app.put('/:tipo/:id', (req, res, next) => {
 
     var tipo = req.params.tipo;
     var id = req.params.id;
@@ -23,9 +23,9 @@ app.put("/:tipo/:id", (req, res, next) => {
     if (tiposValidos.indexOf(tipo) < 0) {
         return res.status(400).json({
             ok: false,
-            mensaje: "Coleccion no valida",
+            mensaje: 'Coleccion no valida',
             error: {
-                message: "las colecciones validas son " + tiposValidos.join(", ")
+                message: 'las colecciones validas son ' + tiposValidos.join(', ')
             }
         });
     }
@@ -49,8 +49,8 @@ app.put("/:tipo/:id", (req, res, next) => {
     if (extencionesValidas.indexOf(extensionArchivo) < 0) {
         return res.status(400).json({
             ok: false,
-            mensaje: "extension no valida",
-            error: { message: "las extensiones validas son " + extencionesValidas.join(', ') }
+            mensaje: 'extension no valida',
+            error: { message: 'las extensiones validas son ' + extencionesValidas.join(', ') }
         });
     }
 
@@ -66,7 +66,9 @@ app.put("/:tipo/:id", (req, res, next) => {
                 ok: false,
                 mensaje: 'Error al mover archivo',
                 errors: err
+
             });
+
         }
 
         subirPorTipo(tipo, id, nombreArchivo, res)
@@ -92,7 +94,7 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
             if (!usuario) {
                 return res.status(400).json({
                     ok: false,
-                    mensaje: "Usuario no existe",
+                    mensaje: 'Usuario no existe',
                     errors: { message: 'usuario no existe' }
                 });
             }
@@ -100,7 +102,7 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
             // Si existen, elimina la imagen anterior
             var pathViejo = './uploads/usuarios/' + usuario.img;
             if (fs.existsSync(pathViejo)) {
-                fs.unlink(pathViejo);
+                fs.unlinkSync(pathViejo);
             }
 
             usuario.img = nombreArchivo;
@@ -108,7 +110,7 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
                 usuarioActualizado.password = ':)';
                 res.status(200).json({
                     ok: true,
-                    mensaje: "imagen de usuario actualizada",
+                    mensaje: 'imagen de usuario actualizada',
                     usuario: usuarioActualizado
                 });
             });
@@ -121,7 +123,7 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
             if (err) {
                 return res.status(500).json({
                     ok: false,
-                    mensaje: "Error subiendo tipo",
+                    mensaje: 'Error subiendo tipo',
                     errors: err
                 });
             }
@@ -129,15 +131,16 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
             if (!medico) {
                 return res.status(400).json({
                     ok: false,
-                    mensaje: "medico no existe",
-                    errors: { message: "medico no existe" }
+                    mensaje: 'medico no existe',
+                    errors: { message: 'medico no existe' }
                 });
             }
 
             // Si existen, elimina la imagen anterior
-            var pathViejo = "./uploads/medicos/" + medico.img;
-            if (fs.existsSync(pathViejo)) {
-                fs.unlink(pathViejo);
+            var pathViejo = './uploads/medicos/' + medico.img;
+            if (fs.existsSync(pathViejo) && medico.img.length > 0) {
+                fs.unlinkSync(pathViejo);
+
             }
 
             medico.img = nombreArchivo;
@@ -145,7 +148,7 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
 
                 res.status(200).json({
                     ok: true,
-                    mensaje: "imagen de medico actualizada",
+                    mensaje: 'imagen de medico actualizada',
                     medico: medicoActualizado
                 });
             });
@@ -158,24 +161,24 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
             if (err) {
                 return res.status(500).json({
                     ok: false,
-                    mensaje: "Error subiendo tipo",
+                    mensaje: 'Error subiendo tipo',
                     errors: err
                 });
             }
 
             if (!hospital) {
-                fs.unlink(path);
+                fs.unlinkSync(path);
                 return res.status(400).json({
                     ok: false,
-                    mensaje: "hospital no existe",
-                    errors: { message: "hospital no existe" }
+                    mensaje: 'hospital no existe',
+                    errors: { message: 'hospital no existe' }
                 });
             }
 
             // Si existen, elimina la imagen anterior
-            var pathViejo = "./uploads/hospitales/" + hospital.img;
+            var pathViejo = './uploads/hospitales/' + hospital.img;
             if (fs.existsSync(pathViejo)) {
-                fs.unlink(pathViejo);
+                fs.unlinkSync(pathViejo);
             }
 
             hospital.img = nombreArchivo;
@@ -183,7 +186,7 @@ function subirPorTipo(tipo, id, nombreArchivo, res) {
 
                 res.status(200).json({
                     ok: true,
-                    mensaje: "imagen de hospital actualizada",
+                    mensaje: 'imagen de hospital actualizada',
                     hospital: hospitalActualizado
                 });
             });
